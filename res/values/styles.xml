@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- e-ink 墨水屏主题:白底黑字,纯二值 -->
+    <style name="Theme.Eink" parent="@android:style/Theme.Material.Light">
+        <item name="android:windowBackground">@color/eink_white</item>
+        <item name="android:colorBackground">@color/eink_white</item>
+        <item name="android:textColorPrimary">@color/eink_black</item>
+        <item name="android:textColor">@color/eink_black</item>
+        <!-- 按钮:空心描边 -->
+        <item name="android:buttonStyle">@style/Widget.Eink.Button</item>
+        <!-- CheckBox:方框勾选 -->
+        <item name="android:checkboxStyle">@style/Widget.Eink.CheckBox</item>
+    </style>
+
+    <style name="Widget.Eink.Button" parent="@android:style/Widget.Material.Light.Button">
+        <item name="android:background">@drawable/btn_eink</item>
+        <item name="android:textColor">@color/btn_eink_text</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:minHeight">44dp</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="Widget.Eink.CheckBox" parent="@android:style/Widget.Material.Light.CompoundButton.CheckBox">
+        <item name="android:button">@drawable/cb_eink</item>
+        <item name="android:textColor">@color/eink_black</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:paddingStart">8dp</item>
+    </style>
+</resources>

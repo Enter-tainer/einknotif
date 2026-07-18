@@ -7,14 +7,13 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.Switch;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -95,8 +94,10 @@ public class MainActivity extends Activity {
         int cur = EinkControl.getMode();
         for (int i = 0; i < RefreshService.ALL_MODES.length; i++) {
             final int mode = RefreshService.ALL_MODES[i];
-            Button b = new Button(this);
-            b.setText(RefreshService.ALL_NAMES[i] + (cur == mode ? " ✓" : ""));
+            Button b = new Button(this, null, 0, R.style.Widget_Eink_Button);
+            b.setText(RefreshService.ALL_NAMES[i]);
+            // 当前模式:实心黑底白字(setActivated 触发 btn_eink 的 activated 态)
+            b.setActivated(cur == mode);
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1);
             b.setLayoutParams(lp);
             b.setOnClickListener(v -> {
@@ -141,7 +142,7 @@ public class MainActivity extends Activity {
 
     private interface CB { void on(boolean b); }
     private void addSwitch(String label, boolean init, CB cb) {
-        Switch sw = new Switch(this);
+        CheckBox sw = new CheckBox(this, null, 0, R.style.Widget_Eink_CheckBox);
         sw.setText(label);
         sw.setChecked(init);
         sw.setOnCheckedChangeListener((v, c) -> cb.on(c));
@@ -150,9 +151,9 @@ public class MainActivity extends Activity {
 
     private void addSeparator() {
         View v = new View(this);
-        v.setBackgroundColor(0xFF888888);
+        v.setBackgroundColor(0xFF000000);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, 2);
+                ViewGroup.LayoutParams.MATCH_PARENT, 1);
         lp.setMargins(0, 30, 0, 10);
         v.setLayoutParams(lp);
         root.addView(v);

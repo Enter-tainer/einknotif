@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 按钮文字色selector:常态黑,按下/选中白 -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true"  android:color="@color/eink_white" />
+    <item android:state_selected="true" android:color="@color/eink_white" />
+    <item android:state_activated="true" android:color="@color/eink_white" />
+    <item android:color="@color/eink_black" />
+</selector>

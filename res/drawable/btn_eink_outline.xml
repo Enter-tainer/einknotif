@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 空心按钮:白底 + 2px 黑描边 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/eink_white" />
+    <stroke android:width="2dp" android:color="@color/eink_black" />
+    <corners android:radius="0dp" />
+    <padding android:left="12dp" android:right="12dp" android:top="8dp" android:bottom="8dp" />
+</shape>

@@ -18,7 +18,7 @@
     <application
         android:label="E-ink 刷新"
         android:icon="@android:drawable/ic_menu_rotate"
-        android:theme="@android:style/Theme.Material.Light"
+        android:theme="@style/Theme.Eink"
         android:allowBackup="false">
 
         <activity
