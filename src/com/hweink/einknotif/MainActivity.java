@@ -142,7 +142,8 @@ public class MainActivity extends Activity {
 
     private interface CB { void on(boolean b); }
     private void addSwitch(String label, boolean init, CB cb) {
-        CheckBox sw = new CheckBox(this, null, 0, R.style.Widget_Eink_CheckBox);
+        // 用 CheckBox 承载开关 drawable(button=switch_eink selector);静态拨杆,无动画。
+        CheckBox sw = new CheckBox(this, null, 0, R.style.Widget_Eink_Switch);
         sw.setText(label);
         sw.setChecked(init);
         sw.setOnCheckedChangeListener((v, c) -> cb.on(c));

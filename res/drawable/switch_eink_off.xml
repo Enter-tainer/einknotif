@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 墨水屏开关 - 关闭态:白底黑描边轨道 + 黑色滑块靠左。
+     用 layer-list(轨道在下,滑块在上)而非 selector 切图,保证开/关尺寸完全一致。
+     track 显式 40x24dp 给 layer-list 一个确定的 intrinsic size,避免 button drawable 渲染成 0/撑满。 -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 轨道:白底 + 2dp 黑描边 -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/eink_white" />
+            <stroke android:width="2dp" android:color="@color/eink_black" />
+            <corners android:radius="0dp" />
+            <size android:width="40dp" android:height="24dp" />
+        </shape>
+    </item>
+    <!-- 滑块:黑方块,靠左,四周留 2dp 缝(轨道描边占 1dp + 1dp 间隙) -->
+    <item android:left="3dp" android:top="3dp" android:right="21dp" android:bottom="3dp">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/eink_black" />
+        </shape>
+    </item>
+</layer-list>
