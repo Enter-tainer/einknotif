@@ -1,0 +1,10 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp"
+    android:viewportWidth="24" android:viewportHeight="24"
+    android:tint="?android:attr/textColorPrimary">
+    <!-- 空心闪电:清晰态(非极速) -->
+    <path android:fillColor="@android:color/white"
+        android:strokeColor="@android:color/white"
+        android:strokeWidth="1.5"
+        android:pathData="M13,2L3,14h7l-1,8 10,-12h-7z M12.3,4.5l-7.2,8.5h5.3l-0.7,6.2 7.2,-8.7h-5.2z"/>
+</vector>

@@ -1,0 +1,27 @@
+# build 产物
+build/
+build*/
+*.apk
+*.idsig
+*.dex
+*.class
+classes.jar
+res.zip
+aligned.apk
+unsigned.apk
+app.apk
+
+# 敏感/大文件(不进 git)
+framework-hidden.jar
+platform.pk8
+platform.x509.pem
+
+# IDE
+.idea/
+*.iml
+.vscode/
+local.properties
+
+# OS
+.DS_Store
+Thumbs.db
