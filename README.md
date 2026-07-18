@@ -55,16 +55,9 @@ bash build.sh
 # → build/einknotif.apk
 ```
 
-The build needs `framework-hidden.jar` (Android `framework-minus-apex`
-intermediates containing the `@hide` `TaskStackListener` class, used at compile
-time by `ForegroundWatcher`). It is **not** in this repo (gitignored — too
-large, and build-tooling-specific). Get it from an AOSP/Khadas build:
-
-```
-out/target/common/obj/JAVA_LIBRARIES/framework-minus-apex_intermediates/classes.jar
-```
-
-Copy it to `einknotif/framework-hidden.jar` before building.
+Standard Android SDK only — no `@hide` framework classes are referenced
+(`TaskStackListener` was dropped after it turned out to require an un-grantable
+permission; see the per-app section below).
 
 ## Install
 
@@ -72,12 +65,10 @@ Copy it to `einknotif/framework-hidden.jar` before building.
 adb install -r build/einknotif.apk
 adb shell pm grant com.hweink.einknotif android.permission.POST_NOTIFICATIONS
 adb shell pm grant com.hweink.einknotif android.permission.PACKAGE_USAGE_STATS
-# optional, for future hidden-API paths:
-adb shell settings put global hidden_api_policy 1
 ```
 
-Then open "E-ink 刷新" once to start the notification service, and add the
-tiles from the quick-settings edit mode.
+No root required. Then open "E-ink 刷新" once to start the notification service,
+and add the tiles from the quick-settings edit mode.
 
 ## Device compatibility
 

@@ -23,10 +23,8 @@ echo "[2/6] aapt2 link -> R.java + base apk"
   --java "$OUT/gen" -o "$OUT/base.apk" \
   --min-sdk-version 26 --target-sdk-version 34 "$OUT/res.zip"
 
-echo "[3/6] javac (含生成的 R.java + framework-hidden.jar 的 @hide 类)"
-# Windows javac 用 ; 作 classpath 分隔符
-javac -encoding UTF-8 -source 8 -target 8 \
-  -classpath "$ANDROID;framework-hidden.jar" \
+echo "[3/6] javac (含生成的 R.java)"
+javac -encoding UTF-8 -source 8 -target 8 -classpath "$ANDROID" \
   -sourcepath "$OUT/gen" -d "$OUT/cls" \
   src/com/hweink/einknotif/*.java "$OUT/gen/com/hweink/einknotif/R.java"
 

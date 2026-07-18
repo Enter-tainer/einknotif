@@ -27,7 +27,7 @@ import java.util.List;
  *  - flip 清晰侧下拉
  *  - 开关:常驻通知 / 开机恢复 / per-app / 切清晰侧自动全刷
  *  - per-app 列表(自动学习的 pkg)
- *  - 授权引导(hidden_api_policy / usage access / 通知)
+ *  - 授权引导(usage access / 通知)
  */
 public class MainActivity extends Activity {
     private ModeStore ms;
@@ -193,16 +193,8 @@ public class MainActivity extends Activity {
         });
         root.addView(notif);
 
-        Button hidden = new Button(this);
-        hidden.setText("设 hidden_api_policy=1(Magisk su)");
-        hidden.setOnClickListener(v -> {
-            boolean ok = com.hweink.einknotif.BootReceiver.ensureHiddenApiPolicy();
-            Toast.makeText(this, ok ? "已设 ✅(TaskStackListener 可用)" : "失败——请用 adb: adb shell su -c 'settings put global hidden_api_policy 1'", Toast.LENGTH_LONG).show();
-        });
-        root.addView(hidden);
-
         Button usage = new Button(this);
-        usage.setText("授权 Usage Access(降级轮询用)");
+        usage.setText("授权 Usage Access(per-app 用)");
         usage.setOnClickListener(v -> startActivity(new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)));
         root.addView(usage);
     }
