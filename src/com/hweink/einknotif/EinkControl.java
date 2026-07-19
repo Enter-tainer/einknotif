@@ -61,4 +61,17 @@ final class EinkControl {
         if (n > 2147483547) { sFull = 1; n = 1; }
         return setProp("sys.ebook.one_full_mode_timeline", String.valueOf(n));
     }
+
+    // 256 灰阶抖动开关。HAL (hwcomposer.rk30board.so) 每帧 property_get 此属性:
+    // =1 走 Rgba8888ToGray256ByRga / ConvertToY8Dither (16→256 抖动), =0 走 16 灰阶。
+    // 作业帮砍了所有 UI 入口, 只能直写属性。persist. 前缀跨重启不丢, 无需 BootReceiver。
+    static final String GRAY256_PROP = "persist.ebook.gray256_enable";
+
+    static boolean isGray256() {
+        return "1".equals(getProp(GRAY256_PROP, "0"));
+    }
+
+    static boolean setGray256(boolean on) {
+        return setProp(GRAY256_PROP, on ? "1" : "0");
+    }
 }

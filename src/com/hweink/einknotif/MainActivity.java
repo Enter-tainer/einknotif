@@ -59,6 +59,14 @@ public class MainActivity extends Activity {
         addSwitch("开机恢复模式", ms.isBootRestore(), b -> ms.setBootRestore(b));
         addSwitch("per-app 自动切换", ms.isPerAppOn(), b -> ms.setPerAppOn(b));
         addSwitch("切到清晰侧自动全刷", ms.isAutoFullOnClear(), b -> ms.setAutoFullOnClear(b));
+        addSwitch("256灰阶平滑", EinkControl.isGray256(), b -> {
+            EinkControl.setGray256(b);
+            EinkControl.triggerFullRefresh();   // 立即全刷让抖动/非抖动可见
+            try {
+                android.service.quicksettings.TileService.requestListeningState(this,
+                    new android.content.ComponentName(this, Gray256TileService.class));
+            } catch (Throwable ignore) {}
+        });
         addSeparator();
         addTitle("per-app 记忆(自动学习)");
         addPerAppList();
