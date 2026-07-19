@@ -32,7 +32,7 @@ public class ForegroundWatcher {
     private static volatile ForegroundWatcher sInstance;
     private static volatile String sCurrentPkg = null;
     /** 用户在当前 pkg 期间手动改过模式 → 置 true,切走时触发存 per-app。 */
-    private static volatile boolean sModeDirty = false;
+    private static volatile boolean sProfileDirty = false;
 
     private final Context ctx;
     private final ModeStore ms;
@@ -57,7 +57,7 @@ public class ForegroundWatcher {
     public static String currentPkg() { return sCurrentPkg; }
 
     /** 用户手动改模式时调,标记 dirty 以便切走时记。 */
-    public static void markDirty() { sModeDirty = true; }
+    public static void markDirty() { sProfileDirty = true; }
 
     /** 前台包名变化处理。 */
     private synchronized void onFgChanged(String pkg) {
@@ -68,8 +68,12 @@ public class ForegroundWatcher {
         Log.i(TAG, "fg -> " + pkg);
         if (!ms.isPerAppOn()) return;
         PerAppStore.Entry e = store.get(pkg);
-        int target = (e != null) ? e.mode : ms.getDefaultMode();
+        int target = e != null ? e.mode : ms.getDefaultMode();
         EinkControl.setMode(target);
+        EinkControl.setColorDep(e != null ? e.colorDep : EinkControl.COLOR_DEFAULT);
+        EinkControl.setContrast(e != null ? e.contrast : EinkControl.COLOR_DEFAULT);
+        EinkControl.setSaturation(e != null ? e.saturation : EinkControl.COLOR_DEFAULT);
+        EinkControl.setBrightness(e != null ? e.brightness : EinkControl.COLOR_DEFAULT);
         ms.setLastMode(target);
         // per-app 自动切模式时:只更新通知文本(不重 startForeground,避免声音/振动)
         RefreshService.updateNotificationText(ctx);
@@ -77,12 +81,14 @@ public class ForegroundWatcher {
 
     /** 若 dirty 且当前 pkg 已知,把当前模式记到 per-app。 */
     private void recordDirtyIfAny() {
-        if (sModeDirty && sCurrentPkg != null) {
+        if (sProfileDirty && sCurrentPkg != null) {
             int cur = EinkControl.getMode();
-            store.recordIfDirty(sCurrentPkg, cur);
-            Log.i(TAG, "recorded " + sCurrentPkg + " -> " + ModeStore.nameOf(cur));
+            store.recordIfDirty(sCurrentPkg, cur, EinkControl.getColorDep(),
+                    EinkControl.getContrast(), EinkControl.getSaturation(),
+                    EinkControl.getBrightness());
+            Log.i(TAG, "recorded profile " + sCurrentPkg + " -> " + ModeStore.nameOf(cur));
         }
-        sModeDirty = false;
+        sProfileDirty = false;
     }
 
     private final Runnable pollRunnable = new Runnable() {

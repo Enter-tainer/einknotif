@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.hweink.einknotif"
-    android:versionCode="2"
-    android:versionName="0.2">
+    android:versionCode="3"
+    android:versionName="0.3">
 
     <uses-sdk android:minSdkVersion="26" android:targetSdkVersion="34" />
 
@@ -77,6 +77,22 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- navbar 按钮的协同设计入口: A2 快切按钮发 FLIP，原生五档菜单发 SET_MODE。
+             所有 action 复用 NavbarAction 同一套逻辑。
+             exported=true 因为发送方是 SystemUI(另一进程)。无权限限制 —— 切刷新模式本身无权限
+             (IEbookManager.setProperty 无 enforceCallingPermission)。 -->
+        <receiver
+            android:name=".NavbarActionReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.hweink.einknotif.action.FLIP" />
+                <action android:name="com.hweink.einknotif.action.CYCLE" />
+                <action android:name="com.hweink.einknotif.action.FULL_REFRESH" />
+                <action android:name="com.hweink.einknotif.action.SET_MODE" />
+                <action android:name="com.hweink.einknotif.action.SET_COLOR" />
             </intent-filter>
         </receiver>
     </application>

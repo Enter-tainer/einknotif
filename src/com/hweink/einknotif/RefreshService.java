@@ -66,30 +66,9 @@ public class RefreshService extends Service {
 
     /** 设模式 + 记 last_mode + per-app 记当前前台 + dirty 标记 + 可选全刷。 */
     private void applyMode(int mode) {
-        EinkControl.setMode(mode);
-        ModeStore ms = new ModeStore(this);
-        ms.setLastMode(mode);
-        ForegroundWatcher.markDirty();
-        // per-app:记到当前前台 pkg
-        if (ms.isPerAppOn()) {
-            String pkg = ForegroundWatcher.currentPkg();
-            if (pkg != null) new PerAppStore(this).put(pkg, mode);
-            Log.i(TAG, "mode " + ModeStore.nameOf(mode) + " for " + pkg);
-        } else {
-            Log.i(TAG, "mode " + ModeStore.nameOf(mode));
-        }
-        // 切到非极速(清晰侧)且开了自动全刷 → 全刷清残影
-        if (mode != ModeStore.MODE_A2 && ms.isAutoFullOnClear()) {
-            EinkControl.triggerFullRefresh();
-        }
-        // 同步磁贴 + 通知文本(静默,不重 startForeground)
-        try {
-            android.service.quicksettings.TileService.requestListeningState(this,
-                new android.content.ComponentName(this, FlipTileService.class));
-            android.service.quicksettings.TileService.requestListeningState(this,
-                new android.content.ComponentName(this, CycleTileService.class));
-        } catch (Throwable ignore) {}
-        updateNotificationText(this);
+        NavbarAction.setMode(this, mode);
+        Log.i(TAG, "mode " + ModeStore.nameOf(mode)
+                + " for " + ForegroundWatcher.currentPkg());
     }
 
     /** 外部调:刷新通知标题(显示当前模式)。走 startForeground,会重发通知(有声音风险)。仅手动切时用。 */

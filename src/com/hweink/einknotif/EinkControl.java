@@ -13,6 +13,11 @@ final class EinkControl {
     private static final String DESCRIPTOR = "android.os.IEbookManager";
     private static final int TRANSACTION_setProperty = 2;
     private static volatile int sFull = 1;
+    static final int COLOR_DEFAULT = 64;
+    static final String COLOR_DEP_PROP = "persist.ebook.colordep";
+    static final String CONTRAST_PROP = "persist.ebook.contgain";
+    static final String SATURATION_PROP = "persist.ebook.satugain";
+    static final String BRIGHTNESS_PROP = "persist.ebook.lumagain";
 
     private EinkControl() {}
 
@@ -52,6 +57,16 @@ final class EinkControl {
         catch (NumberFormatException e) { return 9; }
     }
 
+    static int getColorDep() { return getIntProp(COLOR_DEP_PROP, COLOR_DEFAULT); }
+    static int getContrast() { return getIntProp(CONTRAST_PROP, COLOR_DEFAULT); }
+    static int getSaturation() { return getIntProp(SATURATION_PROP, COLOR_DEFAULT); }
+    static int getBrightness() { return getIntProp(BRIGHTNESS_PROP, COLOR_DEFAULT); }
+
+    static boolean setColorDep(int value) { return setColorProp(COLOR_DEP_PROP, value); }
+    static boolean setContrast(int value) { return setColorProp(CONTRAST_PROP, value); }
+    static boolean setSaturation(int value) { return setColorProp(SATURATION_PROP, value); }
+    static boolean setBrightness(int value) { return setColorProp(BRIGHTNESS_PROP, value); }
+
     static boolean setMode(int mode) {
         return setProp("sys.ebook.mode", String.valueOf(mode));
     }
@@ -60,6 +75,15 @@ final class EinkControl {
         int n = ++sFull;
         if (n > 2147483547) { sFull = 1; n = 1; }
         return setProp("sys.ebook.one_full_mode_timeline", String.valueOf(n));
+    }
+
+    private static int getIntProp(String key, int def) {
+        try { return Integer.parseInt(getProp(key, String.valueOf(def))); }
+        catch (NumberFormatException e) { return def; }
+    }
+
+    private static boolean setColorProp(String key, int value) {
+        return value >= 0 && value <= 128 && setProp(key, String.valueOf(value));
     }
 
     // 256 灰阶抖动开关。HAL (hwcomposer.rk30board.so) 每帧 property_get 此属性:

@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.CheckBox;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,6 +53,9 @@ public class MainActivity extends Activity {
         addCurrentMode();
         addModeButtons();
         addFullRefreshButton();
+        addSeparator();
+        addTitle("色彩参数(当前应用)");
+        addColorControls();
         addSeparator();
         addTitle("设置");
         addFlipClearSide();
@@ -109,14 +113,7 @@ public class MainActivity extends Activity {
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1);
             b.setLayoutParams(lp);
             b.setOnClickListener(v -> {
-                EinkControl.setMode(mode);
-                ms.setLastMode(mode);
-                ForegroundWatcher.markDirty();
-                if (ms.isPerAppOn()) {
-                    String pkg = ForegroundWatcher.currentPkg();
-                    if (pkg != null) perApp.put(pkg, mode);
-                }
-                if (mode != ModeStore.MODE_A2 && ms.isAutoFullOnClear()) EinkControl.triggerFullRefresh();
+                NavbarAction.setMode(this, mode);
                 RefreshService.refreshNotification(this);
                 recreate();
             });
@@ -130,6 +127,53 @@ public class MainActivity extends Activity {
         b.setText("⚡ 立即全刷");
         b.setOnClickListener(v -> EinkControl.triggerFullRefresh());
         root.addView(b);
+    }
+
+    private void addColorControls() {
+        addColorSlider("色深", NavbarAction.COLOR_DEP, EinkControl.getColorDep());
+        addColorSlider("对比度", NavbarAction.CONTRAST, EinkControl.getContrast());
+        addColorSlider("饱和度", NavbarAction.SATURATION, EinkControl.getSaturation());
+        addColorSlider("亮度", NavbarAction.BRIGHTNESS, EinkControl.getBrightness());
+        Button reset = new Button(this);
+        reset.setText("重置色彩参数为 64");
+        reset.setOnClickListener(v -> {
+            NavbarAction.setColor(this, NavbarAction.COLOR_DEP, EinkControl.COLOR_DEFAULT);
+            NavbarAction.setColor(this, NavbarAction.CONTRAST, EinkControl.COLOR_DEFAULT);
+            NavbarAction.setColor(this, NavbarAction.SATURATION, EinkControl.COLOR_DEFAULT);
+            NavbarAction.setColor(this, NavbarAction.BRIGHTNESS, EinkControl.COLOR_DEFAULT);
+            EinkControl.triggerFullRefresh();
+            recreate();
+        });
+        root.addView(reset);
+    }
+
+    private void addColorSlider(String label, String color, int initial) {
+        LinearLayout title = new LinearLayout(this);
+        title.setOrientation(LinearLayout.HORIZONTAL);
+        TextView name = new TextView(this);
+        name.setText(label);
+        name.setLayoutParams(new LinearLayout.LayoutParams(
+                0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+        TextView value = new TextView(this);
+        value.setText(String.valueOf(initial));
+        title.addView(name);
+        title.addView(value);
+        root.addView(title);
+
+        SeekBar slider = new SeekBar(this);
+        slider.setMax(128);
+        slider.setProgress(initial);
+        slider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override public void onProgressChanged(SeekBar seekBar, int progress,
+                    boolean fromUser) {
+                value.setText(String.valueOf(progress));
+            }
+            @Override public void onStartTrackingTouch(SeekBar seekBar) {}
+            @Override public void onStopTrackingTouch(SeekBar seekBar) {
+                NavbarAction.setColor(MainActivity.this, color, seekBar.getProgress());
+            }
+        });
+        root.addView(slider);
     }
 
     private void addFlipClearSide() {
@@ -181,7 +225,9 @@ public class MainActivity extends Activity {
             LinearLayout row = new LinearLayout(this);
             row.setOrientation(LinearLayout.HORIZONTAL);
             TextView tv = new TextView(this);
-            tv.setText(e.pkg + "  → " + ModeStore.nameOf(e.mode));
+            tv.setText(e.pkg + "  → " + ModeStore.nameOf(e.mode)
+                    + " / 色" + e.colorDep + " 对" + e.contrast
+                    + " 饱" + e.saturation + " 亮" + e.brightness);
             tv.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
             Button del = new Button(this);
             del.setText("删除");

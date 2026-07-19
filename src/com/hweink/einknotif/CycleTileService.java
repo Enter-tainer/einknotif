@@ -21,27 +21,9 @@ public class CycleTileService extends TileService {
     @Override
     public void onClick() {
         super.onClick();
-        int cur = EinkControl.getMode();
-        int idx = -1;
-        for (int i = 0; i < ORDER.length; i++) if (ORDER[i] == cur) { idx = i; break; }
-        int target = ORDER[(idx + 1) % ORDER.length];
-        EinkControl.setMode(target);
-        ModeStore ms = new ModeStore(this);
-        ms.setLastMode(target);
-        ForegroundWatcher.markDirty();
-        if (ms.isPerAppOn()) {
-            String pkg = ForegroundWatcher.currentPkg();
-            if (pkg != null) new PerAppStore(this).put(pkg, target);
-        }
-        if (target != ModeStore.MODE_A2 && ms.isAutoFullOnClear()) {
-            EinkControl.triggerFullRefresh();
-        }
+        // 复用 NavbarAction 的 cycle 实现 (与 navbar 按钮同一条路径,逻辑只有一份)
+        NavbarAction.cycle(this);
         updateTile();
-        RefreshService.refreshNotification(this);
-        try {
-            android.service.quicksettings.TileService.requestListeningState(this,
-                new android.content.ComponentName(this, FlipTileService.class));
-        } catch (Throwable ignore) {}
     }
 
     private void updateTile() {

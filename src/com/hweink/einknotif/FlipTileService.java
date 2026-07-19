@@ -25,36 +25,10 @@ public class FlipTileService extends TileService {
     @Override
     public void onClick() {
         super.onClick();
-        ModeStore ms = new ModeStore(this);
-        int cur = EinkControl.getMode();
-        int fast = ModeStore.MODE_A2;
-        int target;
-        if (cur != fast) {
-            ms.setLastNonFast(cur);      // 记住,切回用
-            target = fast;
-        } else {
-            target = ms.getLastNonFast();
-            if (target == fast) target = ms.getFlipClearSide();  // 兜底清晰侧
-        }
-        EinkControl.setMode(target);
-        ms.setLastMode(target);
-        // per-app:记到当前前台 pkg
-        if (ms.isPerAppOn()) {
-            String pkg = ForegroundWatcher.currentPkg();
-            if (pkg != null) new PerAppStore(this).put(pkg, target);
-        }
-        // 切到清晰侧(非极速)且开了自动全刷 → 全刷清残影
-        if (target != fast && ms.isAutoFullOnClear()) {
-            EinkControl.triggerFullRefresh();
-        }
-        Log.i(TAG, "flip -> " + ModeStore.nameOf(target));
+        // 复用 NavbarAction 的 flip 实现(与 navbar 按钮同一条路径,逻辑只有一份)
+        NavbarAction.flip(this);
+        Log.i(TAG, "flip -> " + ModeStore.nameOf(EinkControl.getMode()));
         updateTile();
-        // 同步通知 + 另一个磁贴
-        RefreshService.refreshNotification(this);
-        try {
-            android.service.quicksettings.TileService.requestListeningState(this,
-                new android.content.ComponentName(this, CycleTileService.class));
-        } catch (Throwable ignore) {}
     }
 
     private void updateTile() {

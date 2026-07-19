@@ -13,6 +13,10 @@ to set `sys.ebook.mode` — **no permission required**, any app can call it.
 - **Quick-settings tile** for one-tap flip between Fastest (A2) and Clear (GLR16)
   — the two modes you toggle most.
 - **Cycle tile** to step through all 5 modes.
+- **SystemUI navbar integration**: the stock A2 shortcut uses the same
+  Fastest/Clear flip logic as the tile, while the stock five-choice dialog
+  delegates its selected mode to this app so persistence and per-app memory stay
+  synchronized.
 - **Per-app memory**: each foreground app remembers its own mode — switch into a
   reader and it auto-restores Clear, switch into a note app and it restores Fast.
   Switching away saves the mode you set. Automatic learning, no manual config.
