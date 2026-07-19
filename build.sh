@@ -29,8 +29,9 @@ if [ -f "$BT/apksigner.bat" ]; then APKSIGNER="$BT/apksigner.bat"
 elif [ -f "$BT/apksigner" ]; then APKSIGNER="$BT/apksigner"
 else echo "apksigner not found in $BT"; exit 1; fi
 
-# keystore: 没有就生成一个 debug keystore。
+# keystore: 没有就生成一个 debug keystore(先确保父目录存在)。
 if [ ! -f "$KS" ]; then
+  mkdir -p "$(dirname "$KS")"
   keytool -genkey -keystore "$KS" -storepass android -alias androiddebugkey \
     -keypass android -keyalg RSA -keysize 2048 -validity 10000 \
     -dname "CN=Android Debug,O=Android,C=US"
