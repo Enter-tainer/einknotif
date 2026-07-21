@@ -1,6 +1,6 @@
 # einknotif
 
-A no-root-either way to switch e-ink refresh modes on Rockchip RK3576 e-ink
+A no-root way to switch e-ink refresh modes on Rockchip RK3576 e-ink
 Android devices (Zuoyebang rk3576_ebook / Khadas Edge2L ebook family).
 
 Talks to the on-device Rockchip `IEbookManager` binder (`service call ebook 2`)
@@ -50,8 +50,39 @@ The app polls `UsageStatsManager.queryEvents` every 2.5 s for the latest
 > granted even to a platform-signed `/system/priv-app` on this build — only
 > `system_server` holds it. `hidden_api_policy=1` bypasses the non-SDK blocklist
 > but not the runtime permission check. Polling at 2.5 s on this e-ink device has
-> negligible impact compared with the display/front-light load. See
-> `docs/EINK_REFRESH_APP_DESIGN.md` for the full investigation.
+> negligible impact compared with the display/front-light load. See the
+> [ROM integration runbook](https://github.com/Enter-tainer/zuoyebang-rom-patches/blob/main/runbook/ROM_BUILD_PLAN.md)
+> for the SystemUI and per-app design notes.
+
+## SystemUI integration API
+
+SystemUI sends explicit broadcasts to
+`com.hweink.einknotif/.NavbarActionReceiver`. The receiver is exported without
+a custom permission because the underlying `IEbookManager.setProperty` call is
+also available to ordinary apps on the target firmware.
+
+| Action suffix | Extras | Effect |
+|---|---|---|
+| `FLIP` | none | Toggle Fastest and the remembered non-fast mode. |
+| `CYCLE` | none | Cycle Clear → Normal → Quick → Fast → Fastest. |
+| `FULL_REFRESH` | none | Trigger one full refresh. |
+| `SET_MODE` | `mode` (int), optional `full_refresh` (boolean) | Select mode `9`, `7`, `15`, `14`, or `13`. |
+| `SET_COLOR` | `color` (string), `value` (int `0..128`) | Set `color_dep`, `contrast`, `saturation`, or `brightness`. |
+
+Each suffix is prefixed with `com.hweink.einknotif.action.`. After a mode
+change, einknotif sends the package-targeted
+`com.hweink.einknotif.action.MODE_CHANGED` broadcast to
+`com.android.systemui` with the current `mode` integer. SystemUI should still
+read `sys.ebook.mode` as the authoritative value.
+
+Example:
+
+```bash
+adb shell am broadcast \
+  -n com.hweink.einknotif/.NavbarActionReceiver \
+  -a com.hweink.einknotif.action.SET_MODE \
+  --ei mode 9
+```
 
 ## Build
 
@@ -71,7 +102,7 @@ permission; see the per-app section below).
 ```bash
 adb install -r build/einknotif.apk
 adb shell pm grant com.hweink.einknotif android.permission.POST_NOTIFICATIONS
-adb shell pm grant com.hweink.einknotif android.permission.PACKAGE_USAGE_STATS
+adb shell appops set com.hweink.einknotif GET_USAGE_STATS allow
 ```
 
 No root required. Then open "E-ink 刷新" once to start the notification service,
