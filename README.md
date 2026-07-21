@@ -13,16 +13,19 @@ to set `sys.ebook.mode` — **no permission required**, any app can call it.
 - **Quick-settings tile** for one-tap flip between Fastest (A2) and Clear (GLR16)
   — the two modes you toggle most.
 - **Cycle tile** to step through all 5 modes.
-- **SystemUI navbar integration**: the stock A2 shortcut uses the same
-  Fastest/Clear flip logic as the tile, while the stock five-choice dialog
-  delegates its selected mode to this app so persistence and per-app memory stay
-  synchronized.
-- **Per-app memory**: each foreground app remembers its own mode — switch into a
-  reader and it auto-restores Clear, switch into a note app and it restores Fast.
-  Switching away saves the mode you set. Automatic learning, no manual config.
+- **SystemUI navbar integration**: the middle shortcut uses the same Fastest/Clear
+  flip logic as the tile and changes its icon (`C / N / F / H / A2`) with the
+  active mode. The gear button opens a one-level, E-ink-optimized panel for five
+  modes, full-refresh frequency, front light, and image tuning.
+- **Per-app memory**: each foreground app remembers refresh mode plus color depth,
+  contrast, saturation, and image brightness. Switching away saves the profile;
+  switching back restores it automatically. Front light and full-refresh
+  frequency intentionally remain device-global.
 - **Boot restore**: re-applies the last mode after reboot (`sys.ebook.mode` is
   not persistent, the app re-sets it on `BOOT_COMPLETED`).
-- **Settings page**: pick mode, configure flip clear-side, toggle
+- **E-ink widget styling**: buttons, switches, and sliders use static high-contrast
+  black/white drawables without ripple or color animation.
+- **Settings page**: pick mode, tune the four per-app image values, configure flip clear-side, toggle
   notification / boot-restore / per-app / auto-full-refresh-on-clear, view the
   per-app list.
 
@@ -46,8 +49,8 @@ The app polls `UsageStatsManager.queryEvents` every 2.5 s for the latest
 > `android.permission.MANAGE_ACTIVITY_TASKS` (signature|privileged) which is not
 > granted even to a platform-signed `/system/priv-app` on this build — only
 > `system_server` holds it. `hidden_api_policy=1` bypasses the non-SDK blocklist
-> but not the runtime permission check. Polling at 2.5 s on an e-ink device
-> (no cellular, no backlight) has unmeasurable power cost. See
+> but not the runtime permission check. Polling at 2.5 s on this e-ink device has
+> negligible impact compared with the display/front-light load. See
 > `docs/EINK_REFRESH_APP_DESIGN.md` for the full investigation.
 
 ## Build

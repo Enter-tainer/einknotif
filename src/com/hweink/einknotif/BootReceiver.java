@@ -18,6 +18,7 @@ public class BootReceiver extends BroadcastReceiver {
         if (ms.isBootRestore()) {
             int m = ms.getLastMode();
             EinkControl.setMode(m);
+            NavbarAction.notifyModeChanged(ctx, m);
             Log.i("EinkBoot", "restored mode " + ModeStore.nameOf(m));
         }
         // 启动常驻通知服务(它内部启动 ForegroundWatcher)

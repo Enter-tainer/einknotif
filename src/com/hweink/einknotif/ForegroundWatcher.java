@@ -8,7 +8,7 @@ import android.os.Looper;
 import android.util.Log;
 
 /**
- * 前台 app 监听(per-app 刷新模式切换用)。
+ * 前台 app 监听（per-app 刷新模式 + 四项图像参数切换用）。
  *
  * 机制:UsageStatsManager 2.5s 轮询 MOVE_TO_FOREGROUND 事件,取最新前台包名。
  *   - 权限 PACKAGE_USAGE_STATS(用户授权或 pm grant),无 root。
@@ -16,8 +16,8 @@ import android.util.Log;
  *   - 可靠性:UsageEvents 由系统 activity-transition tracker 填充,全屏阅读器也正确上报。
  *   - 延迟:切 app 后最多 2.5s 切模式,可接受。
  *
- * 切前台 → 查 PerAppStore 切记忆模式(无则 default)。
- * 切走   → 若 modeDirty 则记当前模式到旧 pkg(双向记忆)。
+ * 切前台 → 查 PerAppStore 恢复记忆 profile（无则默认模式 + 图像参数 64）。
+ * 切走   → 若 profileDirty 则记当前 profile 到旧 pkg（双向记忆）。
  *
  * 历史选型(记录备查,勿重试):
  *   - AccessibilityService:全屏沉浸 app 漏 TYPE_WINDOW_STATE_CHANGED,锁住也救不了。
@@ -70,6 +70,7 @@ public class ForegroundWatcher {
         PerAppStore.Entry e = store.get(pkg);
         int target = e != null ? e.mode : ms.getDefaultMode();
         EinkControl.setMode(target);
+        NavbarAction.notifyModeChanged(ctx, target);
         EinkControl.setColorDep(e != null ? e.colorDep : EinkControl.COLOR_DEFAULT);
         EinkControl.setContrast(e != null ? e.contrast : EinkControl.COLOR_DEFAULT);
         EinkControl.setSaturation(e != null ? e.saturation : EinkControl.COLOR_DEFAULT);

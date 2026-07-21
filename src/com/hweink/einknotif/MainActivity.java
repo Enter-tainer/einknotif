@@ -160,7 +160,7 @@ public class MainActivity extends Activity {
         title.addView(value);
         root.addView(title);
 
-        SeekBar slider = new SeekBar(this);
+        SeekBar slider = new SeekBar(this, null, 0, R.style.Widget_Eink_SeekBar);
         slider.setMax(128);
         slider.setProgress(initial);
         slider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {

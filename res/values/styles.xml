@@ -10,6 +10,8 @@
         <item name="android:buttonStyle">@style/Widget.Eink.Button</item>
         <!-- 开关:墨水屏拨杆 -->
         <item name="android:checkboxStyle">@style/Widget.Eink.Switch</item>
+        <!-- 滑块:纯黑白轨道和矩形拖柄,不依赖动态着色 -->
+        <item name="android:seekBarStyle">@style/Widget.Eink.SeekBar</item>
     </style>
 
     <style name="Widget.Eink.Button" parent="@android:style/Widget.Material.Light.Button">
@@ -25,5 +27,13 @@
         <item name="android:textColor">@color/eink_black</item>
         <item name="android:textSize">15sp</item>
         <item name="android:paddingStart">8dp</item>
+    </style>
+
+    <style name="Widget.Eink.SeekBar" parent="@android:style/Widget.Material.Light.SeekBar">
+        <item name="android:progressDrawable">@drawable/seekbar_eink_track</item>
+        <item name="android:thumb">@drawable/seekbar_eink_thumb</item>
+        <item name="android:splitTrack">false</item>
+        <item name="android:minHeight">36dp</item>
+        <item name="android:maxHeight">36dp</item>
     </style>
 </resources>

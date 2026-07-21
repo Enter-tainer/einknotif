@@ -7,7 +7,7 @@ import android.util.Log;
 
 /**
  * navbar 按钮的协同设计入口。
- * SystemUI 的 A2 快切按钮发 FLIP；原生五档弹框的选择结果发 SET_MODE。
+ * SystemUI 的模式快切按钮发 FLIP；一级设置面板发 SET_MODE / SET_COLOR。
  * 所有 action 复用 NavbarAction 的切换实现，逻辑只有一份。
  *
  * 唯一耦合是 action/extra 字符串常量，SystemUI 侧使用相同的值。
@@ -15,7 +15,7 @@ import android.util.Log;
 public class NavbarActionReceiver extends BroadcastReceiver {
     private static final String TAG = "EinkNotif/Navbar";
 
-    /** 极速↔清晰 flip(最高频,navbar ebook_menu 默认绑这个)。 */
+    /** 极速↔清晰 flip（navbar 中间的模式按钮）。 */
     public static final String ACTION_FLIP  = "com.hweink.einknotif.action.FLIP";
     /** 循环走下一档。 */
     public static final String ACTION_CYCLE = "com.hweink.einknotif.action.CYCLE";

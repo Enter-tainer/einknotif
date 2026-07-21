@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.hweink.einknotif"
-    android:versionCode="3"
-    android:versionName="0.3">
+    android:versionCode="4"
+    android:versionName="0.4">
 
     <uses-sdk android:minSdkVersion="26" android:targetSdkVersion="34" />
 
@@ -80,7 +80,7 @@
             </intent-filter>
         </receiver>
 
-        <!-- navbar 按钮的协同设计入口: A2 快切按钮发 FLIP，原生五档菜单发 SET_MODE。
+        <!-- navbar 按钮的协同设计入口: 模式快切发 FLIP，一级 SystemUI 面板发 SET_MODE/SET_COLOR。
              所有 action 复用 NavbarAction 同一套逻辑。
              exported=true 因为发送方是 SystemUI(另一进程)。无权限限制 —— 切刷新模式本身无权限
              (IEbookManager.setProperty 无 enforceCallingPermission)。 -->

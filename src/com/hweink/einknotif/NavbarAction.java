@@ -12,6 +12,8 @@ import android.service.quicksettings.TileService;
  * 三个 tile service 以后也可改成调这里,保证"切模式"只有一份实现。
  */
 final class NavbarAction {
+    static final String ACTION_MODE_CHANGED =
+            "com.hweink.einknotif.action.MODE_CHANGED";
     private static final int[] CYCLE_ORDER = {9, 7, 15, 14, 13};  // 清晰/普通/快速/高速/极速
     static final String COLOR_DEP = "color_dep";
     static final String CONTRAST = "contrast";
@@ -80,6 +82,7 @@ final class NavbarAction {
     /** 设模式 + 记 last_mode + per-app 记当前前台 + 可选全刷 + 同步磁贴/通知。 */
     private static void applyMode(Context ctx, ModeStore ms, int target) {
         EinkControl.setMode(target);
+        notifyModeChanged(ctx, target);
         ms.setLastMode(target);
         ForegroundWatcher.markDirty();
         if (ms.isPerAppOn()) {
@@ -93,6 +96,16 @@ final class NavbarAction {
         RefreshService.updateNotificationText(ctx);
         requestTileListening(ctx, FlipTileService.class);
         requestTileListening(ctx, CycleTileService.class);
+    }
+
+    /** 通知 SystemUI 重读 sys.ebook.mode 并刷新 navbar 模式图标。 */
+    static void notifyModeChanged(Context ctx, int mode) {
+        try {
+            android.content.Intent intent = new android.content.Intent(ACTION_MODE_CHANGED);
+            intent.setPackage("com.android.systemui");
+            intent.putExtra("mode", mode);
+            ctx.sendBroadcast(intent);
+        } catch (Throwable ignore) {}
     }
 
     private static void requestTileListening(Context ctx, Class<? extends TileService> tileCls) {
